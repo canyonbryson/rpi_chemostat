@@ -1,10 +1,86 @@
 <!DOCTYPE html>
 <html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+
+/*add background image to cover */
+body {
+  background-image: url('https://i.ibb.co/FBwLJH9/1407474-full-size-science-backgrounds-3840x2160-for-full-hd.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.fixed {
+   	position: fixed; /* Set the navbar to fixed position */
+  	bottom: 5px; /* Position at the bottom of the page */
+  	right: 5px;
+}
+/* menu details */
+ul.menu {
+	list-style-type: none;
+    margin: 0;
+ 	padding: 0;
+  	overflow: hidden;
+  	border: 0px solid #e7e7e7;
+  	background-color: #f3f3f3;
+    opacity: .95;
+    position: fixed;
+  	top: 0;
+  	width: 100%;
+    transition: .3s;
+}
+ul.menu:hover {
+	opacity: 1;
+}
+.margin-top {
+	margin-top: 80px;
+}
+li.menu {
+float: left;
+}
+.overlay {
+	z-index: 1;
+}
+/* define the text in the menu */
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  transition: .3s;
+}
+/* Change the color when hovering over a menu option */
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+/* Change color of the active menu option */
+li a.active {
+  color: black;
+  background-color: rgba(112, 190, 255, .95);
+}
+.transparent {
+opacity:.95;
+}
+</style>
+
+  
   <head>
     <title>Chemostat Control</title>
   </head>
   
+
+  
 <body>
+<!-- For top button -->
+<div id="top" style="top:-50px;"><p></p></div>
+  
+  
+  
 <h3>Current Setpoints</h3>
 <p>
 Temperature: {{setpoint_T}} C 
@@ -38,6 +114,11 @@ Sparging: {{duty_cycle}} %
     <br>
     <input type="submit" value="Quit"></input>
 </form>
+
+<!-- top button in bottom right-->
+<a href="#top"><img src="https://i.ibb.co/RyHdbWS/arrow.png" class="fixed" alt="arrow" border="0" height="25" style="opacity:0.4;filter:alpha(opacity=40);"></a>
+
 </body>
+
 <!-- <meta http-equiv="refresh" content="2"> --> 
 </html>
