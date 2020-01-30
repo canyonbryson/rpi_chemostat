@@ -19,7 +19,7 @@ def main():
 #    temp = 37
 #    OD = 0.6
 #    sparging = 50
-    return render_template('index.html', setpoint_T = setpoint_T, setpoint_OD = setpoint_OD, duty_cycle = duty_cycle)
+    return render_template('index.html',  temp = temp, OD = OD, sparging = sparging, setpoint_T = setpoint_T, setpoint_OD = setpoint_OD, duty_cycle = duty_cycle)
 
 @app.route('/temp', methods = ['POST'])
 def change_temp():
