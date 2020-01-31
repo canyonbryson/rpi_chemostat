@@ -129,11 +129,17 @@ body, html {
 
 	  <h1 id="setpoints">Current Setpoints</h1>
 <p id="result">
-Temperature: {{temp}} / {{setpoint_T}} C 
+
+Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}} C
+
 <br>
-OD: {{OD}} / {{setpoint_OD}}
+
+OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
+
 <br>
-Sparging: {{sparging}} / {{duty_cycle}} %
+
+Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}} %
+
 </p>
 
 <h3>Change Setpoints</h3>
@@ -169,10 +175,26 @@ Sparging: {{sparging}} / {{duty_cycle}} %
 <a href="#top"><img src="https://i.ibb.co/RyHdbWS/arrow.png" class="fixed" alt="arrow" border="0" height="25" style="opacity:0.4;filter:alpha(opacity=40);"></a>
 
 <script>
-if(typeof(EventSource) !== "undefined") {
-  var source = new EventSource("chemostat.php");
+if(typeof(EventSourcetemp) !== "undefined") {
+  var source = new EventSourcetemp("chemostat.php");
   source.onmessage = function(event) {
-    document.getElementById("result").innerHTML += event.data + "<br>";
+    document.getElementById("temp").innerHTML += event.data + "<br>";
+  };
+} else {
+  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+}
+	if(typeof(EventSourceod) !== "undefined") {
+  var source = new EventSourceod("chemostat.php");
+  source.onmessage = function(event) {
+    document.getElementById("temp").innerHTML += event.data + "<br>";
+  };
+} else {
+  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+}
+	if(typeof(EventSourcesparging) !== "undefined") {
+  var source = new EventSourcesparging("chemostat.php");
+  source.onmessage = function(event) {
+    document.getElementById("temp").innerHTML += event.data + "<br>";
   };
 } else {
   document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
