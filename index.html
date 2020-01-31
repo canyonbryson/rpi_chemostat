@@ -9,11 +9,7 @@
 html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 
 /*add background image to cover */
-body {
-  background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-}
+
 .fixed {
    	position: fixed; /* Set the navbar to fixed position */
   	bottom: 5px; /* Position at the bottom of the page */
@@ -70,7 +66,16 @@ opacity:.85;
 h1, h3, p, form {
 	color: white;
 }
-	
+.chemostatimage {
+  background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.welcomeimage {
+  background-image: url('https://i.ibb.co/Zck7dr5/abstract-molecules-medical-science-background-1017-17844.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}	
 </style>
 
   
@@ -84,7 +89,7 @@ h1, h3, p, form {
 <!-- For top button -->
 <div id="top" style="top:-50px;"><p></p></div>
 
-<div background-image: url('https://i.ibb.co/Zck7dr5/abstract-molecules-medical-science-background-1017-17844.jpg')>
+<div class="welcomeimage">
  <div class="w3-content w3-margin-top transparent" style="max-width:1400px; padding:15px;">
   <div id="be1" class="w3-container w3-card">
   <center>
@@ -96,7 +101,7 @@ h1, h3, p, form {
  </div>
 </div>
 	
-	
+<div class = "chemostatimage">
 <div class="w3-content w3-margin-top transparent" style="max-width:1400px; padding:15px;">
  <div id="chemostat" class="w3-container w3-card">
   <center>
@@ -135,6 +140,7 @@ Sparging: {{sparging}} / {{duty_cycle}} %
     <input type="submit" value="Quit"></input>
 </form>
 </center>
+</div>
 </div>
 </div>
 
