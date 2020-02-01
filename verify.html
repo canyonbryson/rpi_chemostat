@@ -1,14 +1,39 @@
 <!DOCTYPE html>
 <html>
+<style>
+.welcomeimage {
+  background-image: url('https://i.ibb.co/Zck7dr5/abstract-molecules-medical-science-background-1017-17844.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  backgroun-position: center;
+	width: 100%;
+	height: 100%;
+}	
+.button {
+  background-color: #f44336; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+body, html {
+  height: 100%;
+}
+</style>
     <head>
         <title> Verify </title>
     </head>
 <body>
+<div class="welcomeimage">
 <h1> Are you sure you want to quit? </h1>
 <form action="/quit" method="post">
     <input type="radio" name = "answer" value="yes">YES</input>
     <input type="radio" name = "answer" value="no">NO</input>
     <input type="submit" value="Send"></input>
 </form>
+</div>
 </body>
 </html>
