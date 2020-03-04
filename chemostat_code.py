@@ -96,9 +96,10 @@ def OD():
     for i in range (10):
         for j in range (i+1, 10):
             if raw[i]>raw[j]: # go through and order the readings from smallest to largest
-                temp = raw[i]
-                raw[i] = raw[j]
-                raw[i] = temp
+                #temp = raw[i]
+                #raw[i] = raw[j]
+               # raw[i] = temp
+                raw[i], raw[j] = raw[j], raw[i]
                 
     # average the middle six readings together
     for i in range (2,8):
