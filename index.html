@@ -175,34 +175,11 @@ Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}} %
 <a href="#top"><img src="https://i.ibb.co/RyHdbWS/arrow.png" class="fixed" alt="arrow" border="0" height="25" style="opacity:0.4;filter:alpha(opacity=40);"></a>
 
 <script>
-
-/* if(typeof(EventSourcetemp) !== "undefined") {
- var source = new EventSourcetemp("chemostat.php");
-  source.onmessage = function(event) {
-    document.getElementById("temp").innerHTML += event.data + "<br>";
-  };
-} else {
-  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+function time() {
+	var d = new Date();
+	document.getElementById("result").innerHTML = d.getTime();	
 }
-	*/
-if(typeof(EventSource) !== "undefined") {
-  var source = new EventSource("time.php");
-  source.onmessage = function(event) {
-    document.getElementById("result").innerHTML += "Received<br>";	
-    document.getElementById("result").innerHTML += event.data + "<br>";
-  };
-} else {
-  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
-}
-/*	if(typeof(EventSourcesparging) !== "undefined") {
-  var source = new EventSourcesparging("chemostat.php");
-  source.onmessage = function(event) {
-    document.getElementById("temp").innerHTML += event.data + "<br>";
-  };
-} else {
-  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
-}
-	*/
+setInterval(time, 1000);
 </script>
 
 </body>
