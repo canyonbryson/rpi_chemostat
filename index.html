@@ -99,7 +99,7 @@ body, html {
  <div id="chemostat" class="w3-container w3-card">
   <center>
 	  <h1>Welcome to Drew's Chemostat Control Page!</h1>
-	  <h2 id="time">Time Goes Here</h2>
+	  <h2 id="time" style="color:White;">Time Goes Here</h2>
 	  <h1 id="setpoints">Current Setpoints</h1>
 <p id="result">
 
@@ -155,15 +155,15 @@ function startTime() {
 	    h = checkTime(today.getHours()),
 	    m = checkTime(today.getMinutes()),
 	    s = checkTime(today.getSeconds());
-	document.getElementById('time').innerHTML = h + ":" + m + ":" + s;	
+	document.getElementById('time').innerHTML = "Current Time: " + h + ":" + m + ":" + s;	
 }
 setInterval(startTime, 1000);
 
 	
-/*
+
 function jsOD() {
-	var OD = import(chemostat_code)
-	document.getElementByID("OD").innerHTML = OD.OD(); */
+	var OD = import(chemostat_code.py)
+	document.getElementByID("OD").innerHTML = OD.OD(); 
 </script>
 
 </body>
