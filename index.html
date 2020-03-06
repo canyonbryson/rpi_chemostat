@@ -148,11 +148,27 @@ Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}} %
 <a href="#top"><img src="https://i.ibb.co/RyHdbWS/arrow.png" class="fixed" alt="arrow" border="0" height="25" style="opacity:0.4;filter:alpha(opacity=40);"></a>
 
 <script>
-function time() {
-	var d = new Date("2015-03-25T12:00:00Z");;
-	document.getElementById("time").innerHTML = d.getTime();	
+function checkTime(i) {
+  if (i < 10) {
+    i = "0" + i;
+  }
+  return i;
 }
-setInterval(time, 1000);
+
+function startTime() {
+  var today = new Date();
+  var h = today.getHours();
+  var m = today.getMinutes();
+  var s = today.getSeconds();
+  // add a zero in front of numbers<10
+  m = checkTime(m);
+  s = checkTime(s);
+  document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+  t = setTimeout(function() {
+    startTime()
+  }, 1000);
+}
+startTime();
 	
 
 function jsOD() {
