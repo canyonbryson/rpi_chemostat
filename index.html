@@ -153,6 +153,11 @@ function time() {
 	document.getElementById("time").innerHTML = d.getTime();	
 }
 setInterval(time, 1000);
+	
+
+function jsOD() {
+	var OD = import(chemostat_code)
+	document.getElementByID("OD").innerHTML = OD.OD();
 </script>
 
 </body>
