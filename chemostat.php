@@ -8,6 +8,6 @@ header('Cache-Control: no-cache');
 $OD = OD();
 
 
-echo "OD: {$OD}\n\n";
+echo "data: OD: {$OD}\n\n";
 flush();
 ?>
