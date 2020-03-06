@@ -98,7 +98,8 @@ body, html {
 <div class="w3-content w3-margin-top transparent" style="max-width:1400px; padding:0px;">
  <div id="chemostat" class="w3-container w3-card">
   <center>
-
+	  <h1>Welcome to Drew's Chemostat Control Page!</h1>
+	  <h2 id="time"></h2>
 	  <h1 id="setpoints">Current Setpoints</h1>
 <p id="result">
 
@@ -148,8 +149,8 @@ Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}} %
 
 <script>
 function time() {
-	var d = new Date();
-	document.getElementById("result").innerHTML = d.getTime();	
+	var d = new Date("2015-03-25T12:00:00Z");;
+	document.getElementById("time").innerHTML = d.getTime();	
 }
 setInterval(time, 1000);
 </script>
