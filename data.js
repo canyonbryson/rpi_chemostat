@@ -9,8 +9,8 @@ function startTime() {
 	document.getElementById('time').innerHTML = "Current Time: " + h + ":" + m + ":" + s;	
 }
 setInterval(startTime, 1000);
-
-var data = import("data.json")
+/*
+var data = import("data.json");
 var data = JSON.parse(data);
 /* now data = { data: [OD: "OD", sparging:"sparging", temp: "temp"] };
 
