@@ -71,3 +71,20 @@ def email_file():
 if __name__ == '__main__':
 #    app.run(host='192.168.0.114', port=5000)
     app.run()
+    
+    
+    
+ #for json
+def sparging():
+    global duty_cycle
+    value = request.form['SP_sparge']
+    duty_cycle = int(value)
+#    print ("The new sparging percentage is: " , duty_cycle)
+    return duty_cycle
+
+def temp():
+    global setpoint_T
+    value = request.form['SP_T']
+    setpoint_T = float(value)
+#    print ("The new temp setpoint is: " , setpoint_T)
+    return setpoint_T
