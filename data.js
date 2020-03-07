@@ -11,14 +11,14 @@ function startTime() {
 setInterval(startTime, 1000);
 /*
 var data = import("data.json");
-var data = JSON.parse(data);
-/* now data = { data: [OD: "OD", sparging:"sparging", temp: "temp"] };
-
+var data = JSON.parse(data); */
+/* now data = { data: [OD: "OD", sparging:"sparging", temp: "temp"] };*/
+/*
 function displayData() {
   document.getElementById('OD').innerHTML = data.data['OD'];
   document.getElementById('sparging').innerHTML = data.data['sparging'];
   document.getElementById('temp').innerHTML = data.data['temp'];
 }
-setInteval(displayData, 1000);
+setInteval(displayData, 1000); */
 
  
