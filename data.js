@@ -15,7 +15,7 @@ var data = JSON.parse(data); */
 /* now data = { data: [OD: "OD", sparging:"sparging", temp: "temp"] };*/
 /*
 function displayData() {
-  document.getElementById('OD').innerHTML = data.data['OD'];
+  document.getElementById('OD').innerHTML = data.data['OD']; */
   /*document.getElementById('sparging').innerHTML = data.data['sparging'];
   document.getElementById('temp').innerHTML = data.data['temp'];
 }
