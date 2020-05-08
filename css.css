@@ -20,11 +20,14 @@ input[type=text] {
   background-color: white;
   color: black;
 }
-input[type=submit] {
-  box-sizing: border-box;
-  border: none;
+input[type=button], input[type=submit], input[type=reset] {
   background-color: white;
+  border: none;
   color: black;
+  padding: 2px 4px;
+  text-decoration: none;
+  margin: 2px 1px;
+  cursor: pointer;
 }
 .chemostatimage {
   background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
