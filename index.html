@@ -2,10 +2,12 @@
 <html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="css.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <style></style>
  
@@ -18,52 +20,64 @@
 <div id="top" style="top:-50px;"><p></p></div>
 
 	
-<div class = "chemostatimage">
-<div class="w3-content w3-margin-top transparent" style="max-width:1400px; padding:0px;">
- <div id="chemostat" class="w3-container w3-card">
-  <center>
+<div class = "chemostatimage"><div id="overlay">
+<div class="jumbotron text-center" style="background:none; color:white;">
 	  <h1>Welcome to Drew's Chemostat Control Page!</h1>
-	  <h2 id="time" style="color:White;">Time Goes Here</h2>
-	  <h1 id="setpoints">Current Setpoints</h1>
-<p id="result">
+	
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4 text-center">
+		<h1 id="setpoints">Current Setpoints</h1>
+		<p id="result">
 
-Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}} C
+		Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}} C
 
-<br>
+		<br>
 
-OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
+		OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
 
-<br>
+		<br>
 
-Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}} %
+		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}} %
 
-</p>
+		</p>
+	  </div>
+    <div class="col-sm-4 text-center">
+	<h1>Change Setpoints</h1>
+	<form action="/temp" method="post">
+	  Temperature Setpoint
+	  <input type="text" name="SP_T"> C</input>
+	  <input type="submit" value="Send"></input>
+	</form>
 
-<h3>Change Setpoints</h3>
-<form action="/temp" method="post">
-  Temperature Setpoint
-  <input type="text" name="SP_T"> C</input>
-  <input type="submit" value="Send"></input>
-</form>
- 
-<form action="/OD" method="post">
-  <br>
-  Optical Density Setpoint 
-  <input type="text" name="SP_OD"></input>
-  <input type="submit" value="Send"></input>  
-</form> 
- 
-<form action="/sparge" method="post">
-  <br>
-  Sparging Percentage (0-100)
-  <input type="text" name="SP_sparge"> %</input>
-  <input type="submit" value="Send"></input>  
-</form>
-<form action="/finish" method="post">
-    <br>
-    <input type="submit" value="Quit"></input>
-</form>
-</center>
+	<form action="/OD" method="post">
+	  <br>
+	  Optical Density Setpoint 
+	  <input type="text" name="SP_OD"></input>
+	  <input type="submit" value="Send"></input>  
+	</form> 
+
+	<form action="/sparge" method="post">
+	  <br>
+	  Sparging Percentage (0-100)
+	  <input type="text" name="SP_sparge"> %</input>
+	  <input type="submit" value="Send"></input>  
+	</form>
+	<form action="/finish" method="post">
+	    <br>
+	    <input type="submit" value="Quit"></input>
+	</form>
+	</div>
+    <div class="col-sm-4 text-center">
+	    <h1>Graphs/Other stuff</h1>
+	</div>
+  </div>
+</div>
+	
+	
+
+
+
 </div>
 </div>
 </div>
