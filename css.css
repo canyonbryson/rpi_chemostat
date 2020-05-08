@@ -17,8 +17,8 @@ h1, h3, p {
 input[type=text] {
   box-sizing: border-box;
   border: none;
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
 }
 .chemostatimage {
   background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
