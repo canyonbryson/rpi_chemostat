@@ -15,7 +15,6 @@ h1, h3, p {
 	color: white;
 }
 input[type=text] {
-  padding: 8px 8px;
   box-sizing: border-box;
   border: none;
   background-color: black;
