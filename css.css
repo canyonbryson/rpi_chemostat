@@ -10,9 +10,12 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 .transparent {
 opacity:.85;
 }
-	
+
 h1, h3, p, form {
 	color: white;
+}
+input{
+color: black;	
 }
 .chemostatimage {
   background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
