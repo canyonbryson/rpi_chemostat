@@ -14,7 +14,7 @@ opacity:.85;
 h1, h3, p, form {
 	color: white;
 }
-input{
+input[type=text]{
 color: black;	
 }
 .chemostatimage {
