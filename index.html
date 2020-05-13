@@ -40,29 +40,32 @@
 		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%
 
 		</p>
+	    <form action="{{ url_for('/refresh') }}" method="post">
+	    <button id="refresh">Refresh Live data now</button>
+	    </form>
 	  </div>
     <div class="col-sm-4 text-center">
 	<h3>Change Setpoints</h3>
-	<form action="/temp" method="post">
+	<form action="{{ url_for('/temp') }}" method="post">
 		<p>Temperature Setpoint</p>
 	  <input type="text" name="SP_T" style="background-color:white; color:black;"> C</input>
 	  <input type="submit" value="Set" style="color:black;"></input>
 	</form>
 
-	<form action="/OD" method="post">
+	<form action="{{ url_for('/temp') }}" method="post">
 	  <br>
 		<p>Optical Density Setpoint</p> 
 	  <input type="text" name="SP_OD" style="background-color:white; color:black;"></input>
 	  <input type="submit" value="Set" style="color:black;"></input>  
 	</form> 
 
-	<form action="/sparge" method="post">
+	<form action="{{ url_for('/temp') }}" method="post">
 	  <br>
 		<p>Sparging Percentage (0-100)</p>
 	  <input type="text" name="SP_sparge" style="background-color:white; color:black;">%</input>
 	  <input type="submit" value="Set" style="color:black;"></input>  
 	</form>
-	<form action="/finish" method="post">
+	<form action="{{ url_for('/finish') }}" method="post">
 	    <br>
 	    <input type="submit" value="Quit" style="color:black;"></input>
 	</form>
