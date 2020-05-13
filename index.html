@@ -75,8 +75,10 @@
 	    <p>Media Pump Time</p>
 	    <p>Priming Button</p>
 	    <p>Sterilization</p>
-	    <p>Power Off Button</p>
 	    <p>Calibrate OD and pH</p>
+	    <form action="{{ url_for('/powerOff') }}" method="post">
+	    <button class="btn btn-success btn-sm">Power Off</button>
+	</form>
 	</div>
   </div>
 <div class="row">
