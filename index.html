@@ -49,25 +49,25 @@
 	<form action="{{ url_for('/temp') }}" method="post">
 		<p>Temperature Setpoint</p>
 	  <input type="text" name="SP_T" style="background-color:white; color:black;" placeholder="Enter new temp here..."> C</input>
-	  <input type="submit" value="Set" style="color:black;"></input>
+	  <input type="submit" value="Set" style="color:black;" class="btn btn-success btn-sm"></input>
 	</form>
 
 	<form action="{{ url_for('/temp') }}" method="post">
 	  <br>
 		<p>Optical Density Setpoint</p> 
 	  <input type="text" name="SP_OD" style="background-color:white; color:black;" placeholder="Enter new OD here..."></input>
-	  <input type="submit" value="Set" style="color:black;"></input>  
+	  <input type="submit" value="Set" style="color:black;" class="btn btn-success btn-sm"></input>  
 	</form> 
 
 	<form action="{{ url_for('/temp') }}" method="post">
 	  <br>
 		<p>Sparging Percentage (0-100)</p>
 	  <input type="text" name="SP_sparge" style="background-color:white; color:black;" placeholder="Enter new sparging here...">%</input>
-	  <input type="submit" value="Set" style="color:black;"></input>  
+	  <input type="submit" value="Set" style="color:black;" class="btn btn-success btn-sm"></input>  
 	</form>
 	<form action="{{ url_for('/finish') }}" method="post">
 	    <br>
-	    <input type="submit" value="Quit" style="color:black;"></input>
+	    <input type="submit" value="Quit" style="color:black;" class="btn btn-success btn-sm"></input>
 	</form>
 	</div>
     <div class="col-sm-4 text-center">
