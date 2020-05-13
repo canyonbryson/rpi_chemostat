@@ -21,6 +21,10 @@ def main():
 #    sparging = 50
     return render_template('index.html',  temp = temp, OD = OD, sparging = sparging, setpoint_T = setpoint_T, setpoint_OD = setpoint_OD, duty_cycle = duty_cycle)
 
+@app.route('/refresh', methods=["POST"])
+def refresh():
+    return main()
+
 @app.route('/temp', methods = ['POST'])
 def change_temp():
     global setpoint_T
