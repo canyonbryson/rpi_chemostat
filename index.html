@@ -26,21 +26,15 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-4 text-center">
-		<h3 id="setpoints">Current Setpoints</h3>
-		<p id="result">
-
-		Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}}C
-
-		<br><br>
-
-		OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
-
-		<br><br>
-
-		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%
-
-		</p>
 	    <form action="{{ url_for('/refresh') }}" method="post">
+		<h3 id="setpoints">Current Setpoints</h3>
+		<p>
+		Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}}C
+		<br><br>
+		OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
+		<br><br>
+		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%
+		</p>
 	    <button id="refresh" class="btn btn-success btn-sm">Refresh Data</button>
 	    </form>
 	  </div>
@@ -103,7 +97,7 @@
 </div>
 </div>
 
-<script src="data.js">
+<script src="main.js">
 </script>
 </body>
 </html>
