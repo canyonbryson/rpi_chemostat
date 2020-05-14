@@ -2,6 +2,6 @@
 function startTime() {
 	document.getElementById('refresh').click()	
 }
-setInterval(startTime, 1000 * 10);
+setInterval(startTime, 1000 * 30);
 
  
