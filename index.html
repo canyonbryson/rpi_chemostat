@@ -29,12 +29,13 @@
 	    <form action="{{ url_for('/refresh') }}" method="post">
 		<h3 id="setpoints">Current Setpoints</h3>
 		<p>
+		Reactor: {{ state }} <br>
 		Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}}C
 		<br><br>
 		OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
 		<br><br>
-		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%
-		</p>
+		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%<br>
+		Media Pump time: {{ pump_time }} Sec</p>
 	    <button id="refresh" class="btn btn-success btn-sm">Refresh Data</button>
 	    </form>
 	  </div>
@@ -46,18 +47,28 @@
 	  <button class="btn btn-success btn-sm">Set</button>
 	</form>
 
-	<form action="{{ url_for('/temp') }}" method="post">
+	<form action="{{ url_for('/OD') }}" method="post">
 	  <br>
 		<p>Optical Density Setpoint</p> 
 	  <input type="text" name="SP_OD" style="background-color:white; color:black;" placeholder="Enter new OD here..."></input>
 	  <button class="btn btn-success btn-sm">Set</button>  
 	</form> 
 
-	<form action="{{ url_for('/temp') }}" method="post">
+	<form action="{{ url_for('/sparge') }}" method="post">
 	  <br>
-		<p>Sparging Percentage (0-100)</p>
+		<p>Sparging (0-100)</p>
 	  <input type="text" name="SP_sparge" style="background-color:white; color:black;" placeholder="Enter new sparging here...">%</input>
 	  <button class="btn btn-success btn-sm">Set</button>  
+	</form>
+	<form action="{{ url_for('/media_time') }}" method="post">
+	  <br>
+		<p>Media Pump Time</p>
+	  <input type="text" name="time_media" style="background-color:white; color:black;" placeholder="Enter new sparging here...">Sec</input>
+	  <button class="btn btn-success btn-sm">Set</button>  
+	</form>
+	<form action="{{ url_for('/start') }}" method="post">
+	    <br>
+	    <button class="btn btn-success btn-sm">Run</button>
 	</form>
 	<form action="{{ url_for('/finish') }}" method="post">
 	    <br>
@@ -66,13 +77,19 @@
 	</div>
     <div class="col-sm-4 text-center">
 	    <h3>Other stuff</h3>
-	    <p>Media Pump Time</p>
-	    <p>Priming Button</p>
 	    <p>Sterilization</p>
 	    <p>Calibrate OD and pH</p>
+	    <p>Prime/Purge:</p>
+	    <form action="{{ url_for('/primeOD') }}" method="post">
+	    <button class="btn btn-danger btn-sm">OD Pump</button>
+	    </form><form action="{{ url_for('/primeIN') }}" method="post">
+	    <button class="btn btn-danger btn-sm">Media In</button>
+	    </form><form action="{{ url_for('/primeOUT') }}" method="post">
+	    <button class="btn btn-danger btn-sm">Media Out</button>
+	    </form>
 	    <form action="{{ url_for('/powerOff') }}" method="post">
 	    <button class="btn btn-danger btn-sm">Power Off</button>
-	</form>
+	    </form>
 	</div>
   </div>
 <div class="row">
