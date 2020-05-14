@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Data</title>
+  </head>
+  <body>
+  <form action="{{ url_for('/refresh') }}" method="post">
+		<h3 id="setpoints">Current Setpoints</h3>
+		<p>
+		Reactor: {{ state }} <br>
+		Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}}C
+		<br>
+		OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
+		<br>
+		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%<br>
+		Media Pump time: {{ pump_time }} Sec</p>
+	    <button id="refresh" class="btn btn-success btn-sm">Refresh Data</button>
+	    </form>
+  </body>
+</html>
+
