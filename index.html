@@ -66,15 +66,16 @@
 	  <input type="text" name="time_media" style="background-color:white; color:black;" placeholder="Enter new sparging here...">Sec</input>
 	  <button class="btn btn-success btn-sm">Set</button>  
 	</form>
+	<div class="btn-group">
 	<form action="{{ url_for('/start') }}" method="post">
 	    <br>
-	    <button class="btn btn-success btn-sm">Run</button>
+	    <button class="btn btn-primary btn-success btn-sm">Run</button>
 	</form>
 	<form action="{{ url_for('/finish') }}" method="post">
 	    <br>
-	    <button class="btn btn-success btn-sm">Quit</button>
+	    <button class="btn btn-primary btn-success btn-sm">Quit</button>
 	</form>
-	</div>
+	</div></div>
     <div class="col-sm-4 text-center">
 	    <h3>Other stuff</h3>
 	    <p>IP address: {{ IP }}</p>
