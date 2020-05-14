@@ -31,9 +31,9 @@
 		<p>
 		Reactor: {{ state }} <br>
 		Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}}C
-		<br><br>
+		<br>
 		OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
-		<br><br>
+		<br>
 		Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%<br>
 		Media Pump time: {{ pump_time }} Sec</p>
 	    <button id="refresh" class="btn btn-success btn-sm">Refresh Data</button>
@@ -83,11 +83,11 @@
 	    <p>Calibrate OD and pH</p>
 	    <p>Prime/Purge:</p>
 	    <form action="{{ url_for('/primeOD') }}" method="post">
-	    <button class="btn btn-danger btn-sm">OD Pump</button>
+	    <button class="btn btn-danger btn-sm">OD Pump</button><br><br>
 	    </form><form action="{{ url_for('/primeIN') }}" method="post">
-	    <button class="btn btn-danger btn-sm">Media In</button>
+	    <button class="btn btn-danger btn-sm">Media In</button><br><br>
 	    </form><form action="{{ url_for('/primeOUT') }}" method="post">
-	    <button class="btn btn-danger btn-sm">Media Out</button>
+	    <button class="btn btn-danger btn-sm">Media Out</button><br><br>
 	    </form>
 	    <form action="{{ url_for('/powerOff') }}" method="post">
 	    <button class="btn btn-danger btn-sm">Power Off</button>
