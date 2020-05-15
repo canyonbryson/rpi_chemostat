@@ -16,99 +16,111 @@
   </head>
   
 <body><!-- onload="startTime()"-->
-
-	
 <div class = "chemostatimage"><div id="overlay">
 <div class="jumbotron text-center" style="background:none; color:white;">
-	  <h2>Chemostat Control</h2>
-	<h3>Adaptive Labratory Evolution with <i>Bacillus Subtilis</i></h3>
-	
+      <h2 style="margin-top:0px;">Chemostat Control</h2>
+    <h3>Adaptive Labratory Evolution with <i>Bacillus Subtilis</i></h3>
+    
 <div class="container">
   <div class="row">
     <div class="col-sm-4 text-center">
-	    <iframe scr="canyonbryson.github.io/rpi_chemostat/data.html" style="border:none; height:100%;"></iframe>
-	  </div>
+        <h3 id="setpoints">Current Setpoints</h3>
+        <p>
+        Reactor: {{ state }} <br>
+        Temperature: <span id="temp">{{temp}}</span> / {{setpoint_T}}C
+        <br>
+        OD: <span id="OD">{{OD}}</span> / {{setpoint_OD}}
+        <br
+        Sparging: <span id="sparging">{{sparging}}</span> / {{duty_cycle}}%<br>
+        Media Pump time: <span id="media_pump">{{ pump_time }}</span> Sec</p>
+        <form action="{{ url_for('refresh') }}" method="post">
+        <button id="refresh" class="btn btn-success btn-sm">Refresh Data</button>
+        </form>
+      </div>
     <div class="col-sm-4 text-center">
-	<h3>Change Setpoints</h3>
-	<form action="{{ url_for('/temp') }}" method="post">
-		<p>Temperature Setpoint</p>
-	  <input type="text" name="SP_T" style="background-color:white; color:black;" placeholder="Enter new temp here..."> C</input>
-	  <button class="btn btn-success btn-sm">Set</button>
-	</form>
+    <h3>Change Setpoints</h3>
+    <form action="{{ url_for('change_temp') }}" method="post">
+        <p>Temperature Setpoint</p>
+      <input type="text" name="SP_T" style="background-color:white; color:black;" placeholder="Enter new temp here..."> C</input>
+      <button class="btn btn-success btn-sm">Set</button>
+    </form>
 
-	<form action="{{ url_for('/OD') }}" method="post">
-	 
-		<p>Optical Density Setpoint</p> 
-	  <input type="text" name="SP_OD" style="background-color:white; color:black;" placeholder="Enter new OD here..."></input>
-	  <button class="btn btn-success btn-sm">Set</button>  
-	</form> 
+    <form action="{{ url_for('change_OD') }}" method="post">
+      
+        <p>Optical Density Setpoint</p> 
+      <input type="text" name="SP_OD" style="background-color:white; color:black;" placeholder="Enter new OD here..."></input>
+      <button class="btn btn-success btn-sm">Set</button>  
+    </form> 
 
-	<form action="{{ url_for('/sparge') }}" method="post">
-	 
-		<p>Sparging (0-100)</p>
-	  <input type="text" name="SP_sparge" style="background-color:white; color:black;" placeholder="Enter new sparging here...">%</input>
-	  <button class="btn btn-success btn-sm">Set</button>  
-	</form>
-	<form action="{{ url_for('/media_time') }}" method="post">
-	  
-		<p>Media Pump Time</p>
-	  <input type="text" name="time_media" style="background-color:white; color:black;" placeholder="Enter new sparging here...">Sec</input>
-	  <button class="btn btn-success btn-sm">Set</button>  
-	</form>
-	<form action="{{ url_for('/start') }}" method="post" style="display:inline-block; margin-right:10px;">
-	    
-	    <button class="btn btn-success btn-sm" style="float:left;">Run</button>
-	</form>
-	<form action="{{ url_for('/finish') }}" method="post" style="display:inline-block;">
-	    
-	    <button class="btn btn-success btn-sm" style="float:left;">Quit</button>
-	</form>
-	</div>
+    <form action="{{ url_for('change_sparge') }}" method="post">
+      
+        <p>Sparging (0-100)</p>
+      <input type="text" name="SP_sparge" style="background-color:white; color:black;" placeholder="Enter new sparging here...">%</input>
+      <button class="btn btn-success btn-sm">Set</button>  
+    </form>
+    <form action="{{ url_for('media_time') }}" method="post">
+      
+        <p>Media Pump Time</p>
+      <input type="text" name="time_media" style="background-color:white; color:black;" placeholder="Enter new Media Pump Time...">Sec</input>
+      <button class="btn btn-success btn-sm">Set</button>  
+    </form>
+    <div style="display:inline-block;">
+    <form action="{{ url_for('start_run') }}" method="post"
+        <button class="btn btn-success btn-sm">Run</button>
+    </form>
+    <form action="{{ url_for('end_run') }}" method="post"
+        <button class="btn btn-danger btn-sm">Quit</button>
+    </form>
+    </div></div>
     <div class="col-sm-4 text-center">
-	    <h3>Other stuff</h3>
-	    <p>IP address: {{ IP }}</p>
-	    <p>Sterilization</p>
-	    <p>Calibrate OD and pH</p>
-	    <p>Prime/Purge:</p>
-	    <form action="{{ url_for('/primeOD') }}" method="post">
-	    <button class="btn btn-danger btn-sm">OD Pump</button><br><br>
-	    </form><form action="{{ url_for('/primeIN') }}" method="post">
-	    <button class="btn btn-danger btn-sm">Media In</button><br><br>
-	    </form><form action="{{ url_for('/primeOUT') }}" method="post">
-	    <button class="btn btn-danger btn-sm">Media Out</button><br><br>
-	    </form>
-	    <form action="{{ url_for('/powerOff') }}" method="post">
-	    <button class="btn btn-danger btn-sm">Power Off</button>
-	    </form>
-	</div>
+        <h3>Other stuff</h3>
+        <p>Sterilization</p>
+        <p>Calibrate OD and pH</p>
+        <p>Prime/Purge:</p>
+        <form action="{{ url_for('primeOD') }}" method="post">
+        <input type="text" name="time_OD" style="background-color:white; color:black;" placeholder="Enter OD prime time...">Sec</input>
+        <button class="btn btn-success btn-sm">OD Pump</button><br><br>
+        </form>
+        
+        <form action="{{ url_for('primeIN') }}" method="post">
+        <input type="text" name="time_IN" style="background-color:white; color:black;" placeholder="Enter pump In time...">Sec</input>
+        <button class="btn btn-success btn-sm">Media In</button><br><br>
+        </form>
+        
+        <form action="{{ url_for('primeOUT') }}" method="post">
+        <input type="text" name="time_OUT" style="background-color:white; color:black;" placeholder="Enter pump Out time...">Sec</input>
+        <button class="btn btn-success btn-sm">Media Out</button><br><br>
+        </form>
+        <form action="{{ url_for('powerOFF') }}" method="post">
+        <button class="btn btn-danger btn-sm">Power Off</button>
+        </form>
+    </div>
   </div>
 <div class="row">
-	<div class="col-sm-4 text-center">
-		<h2>Graph 1</h2>
-		<p>OD vs time</p>
-	</div>
-	
-	<div class="col-sm-4 text-center">
-		<h2>Graph 2</h2>
-		<p>Temp vs Time</p>
-	</div>
-	<div class="col-sm-4 text-center">
-		<h2>Graph 3</h2>
-		<p>pH vs Time</p>
-	</div>
+    <div class="col-sm-4 text-center">
+        <h2>Graph 1</h2>
+        <p>OD vs time</p>
+    </div>
+    
+    <div class="col-sm-4 text-center">
+        <h2>Graph 2</h2>
+        <p>Temp vs Time</p>
+    </div>
+    
+    <div class="col-sm-4 text-center">
+        <h2>Graph 3</h2>
+        <p>pH vs Time</p>
+    </div>
 </div>
 
 </div>
-	
-	
+    
+    
 
 
 
 </div>
 </div>
 </div>
-
-<script src="main.js">
-</script>
 </body>
 </html>
