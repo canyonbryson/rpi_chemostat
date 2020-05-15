@@ -1,7 +1,13 @@
-
-function startTime() {
-	document.getElementById('refresh').click()	
-}
-setInterval(startTime, 1000 * 30);
-
- <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+document.addEventListener('DOMConetentLoaded', () => {
+    
+    // Connect to websocket
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+                            
+    // When refreshing, refresh data
+    socket.on('refreshing', dataList => {
+        document.querySelector('#temp').innerHTML = dataList[0];
+        document.querySelector('#OD').innerHTML = dataList[1];
+        document.querySelector('#sparging').innerHTML = dataList[2];
+        document.querySelector('#media_pump').innerHTML = dataList[3];
+        });
+    });
