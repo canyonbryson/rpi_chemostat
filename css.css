@@ -1,19 +1,13 @@
 html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 
-/*add background image to cover */
-
-.fixed {
-   	position: fixed; /* Set the navbar to fixed position */
-  	bottom: 5px; /* Position at the bottom of the page */
-  	right: 5px;
-}
 .transparent {
 opacity:.85;
 }
 
 h1, h3, p {
-	color: white;
+    color: white;
 }
+
 input[type=text] {
   box-sizing: border-box;
   border: none;
@@ -33,14 +27,17 @@ input[type=button], input[type=submit], input[type=reset] {
   background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
   background-repeat: no-repeat;
   background-size: cover;
-  backgroun-position: center;
-	width: 100%;
-	height: 100%;
 }
-	
+    
 body, html {
-  height: 100%;
+  height: auto;
+  margin: auto;
+  width:100%;
 }
+body {
+      overflow: scroll;
+    position:absolute;
+    }
  #overlay {
   position: fixed;
   display: block;
@@ -53,14 +50,4 @@ body, html {
   background-color: rgba(0,0,0,0.5);
   z-index: 2;
   cursor: pointer;
-}
-
-#text{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  font-size: 50px;
-  color: white;
-  transform: translate(-50%,-50%);
-  -ms-transform: translate(-50%,-50%);
 }
