@@ -27,6 +27,7 @@ input[type=button], input[type=submit], input[type=reset] {
   background-image: url('https://i.ibb.co/C1d6qgM/45760598514-3da4c18fa7-b.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+  background-attachment: fixed;
 }
     
 body, html {
