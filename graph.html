@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>  
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css.css">
  
  <head>
@@ -33,16 +35,76 @@
     <div class="col-sm-4 text-center">
         <h2>Graph 1</h2>
         <p>OD vs time</p>
+     <canvas id="ODChart"></canvas>
     </div>
     
     <div class="col-sm-4 text-center">
         <h2>Graph 2</h2>
         <p>Temp vs Time</p>
+     <canvas id="tempChart"></canvas>
     </div>
     
     <div class="col-sm-4 text-center">
         <h2>Graph 3</h2>
         <p>pH vs Time</p>
+     <canvas id="pHChart"></canvas>
  </div></div></div>
+ 
+<script type="text/javascript">
+window.onload = function () {
+
+var dataPoints = [];
+
+var options = {
+	theme: "light2",
+	title: {
+		text: "Chemostat Data"
+	},
+	data: [{
+		type: "spline",
+		dataPoints: dataPoints
+	}]
+};
+
+$("#chartContainer").CanvasJSChart(options);
+updateData();
+
+// Initial Values
+var xValue = {{ time }};
+var yValue = {{ temp }};
+var newDataCount = 6;
+
+function addData(data) {
+	if (newDataCount != 1) {
+		$.each(data, function (key, value) {
+			dataPoints.push({ x: value[0], y: parseInt(value[1]) });
+			xValue++;
+			yValue = parseInt(value[1]);
+		});
+		newDataCount = 1;
+	} else {
+		//dataPoints.shift();
+		dataPoints.push({ x: data[0][0], y: parseInt(data[0][1]) });
+		xValue++;
+		yValue = parseInt(data[0][1]);
+	}
+	$("#chartContainer").CanvasJSChart().render();
+	setTimeout(updateData, 1500);
+}
+
+function updateData() {
+	$.getJSON("/tempData", addData);
+}
+
+}
+</script>
+ 
 </body>
 </html>
+
+ <!-- 
+@app.route("/tempData")
+def tempData():
+ global temp, time
+ return jsonify({'time':time, 'temp':temp})
+-->
