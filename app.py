@@ -5,44 +5,54 @@ Drew Porter
 '''
 
 '''
-TODO
-
-- fit everything in lid
-- design controller container
+TO DO
 - calibrate optical density
 - web interface
 
 '''
-import busio
-import threading
-import adafruit_mcp3xxx.mcp3008 as MCP
-from adafruit_mcp3xxx.analog_in import AnalogIn
-import os
+import busio # contains classes for rpi communication, such as I2C or spi. hence 'bus' - io
+import threading # allows the proccessor to run multiple tasks simultaneously. Called concurrency.
+import adafruit_mcp3xxx.mcp3008 as MCP #library for the mcp chip
+from adafruit_mcp3xxx.analog_in import AnalogIn #library for the analog pins
+import os # for certain commands
 from datetime import datetime
-import glob
-import board
-import subprocess
+import glob # identifies files of a a specific extension or pattern
+import board # similar to gpio?
+import subprocess # for certain terminal commands
 import email_test as em
 import time
-import digitalio
-from PIL import Image, ImageDraw, ImageFont
-import adafruit_ssd1306
-import RPi.GPIO as GPIO
+import csv # for the csv file
+import digitalio # for the digital pins
+from PIL import Image, ImageDraw, ImageFont # for the screen
+import adafruit_ssd1306 # for the screen
+import RPi.GPIO as GPIO # for gpio pins
 import pigpio #this is just for the LED. using RPi.GPIO for everything
               # else as I didn't want to have to go through and
               # rewrite everything else
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-from flask import Flask, render_template, request, redirect, url_for
-from flask_socketio import SocketIO, emit #for live data
+
+from adafruit_motorkit import MotorKit
+kit = MotorKit()    #Motor Library for the motor hat. Initialize each motor
+m_out = kit.motor1
+m_in = kit.motor2
+m_air = kit.motor3
+m_od = kit.motor4
+
+import requests
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-socketio = SocketIO(app) #create an instance of a web socket
 
-from subprocess import check_output #For the IP address
-IP = check_output(['hostname', '-I']).strip()
+import pygal #for the graph
+from pygal.style import DarkStyle, NeonStyle
 
+from subprocess import check_output, call #For the IP address, shutdown
+IP = extra = ""
+IP = check_output(['hostname', '-I']).strip().decode()
+IP, extra = IP.split(" ", 1)
+        
 pi = pigpio.pi() #connect to loccl pi
 
 # setup for DS18B20 temperature probe
@@ -62,7 +72,7 @@ cs = digitalio.DigitalInOut(board.D13)
 mcp = MCP.MCP3008(spi, cs)
 
 # initialize global variables for threading
-temp = 40.0
+temp = 20.0
 setpoint_T = 37.0
 pH = 7.00
 optical_density = 0.00
@@ -73,27 +83,71 @@ media = 'OFF'
 purge = False
 pump_time = 10 #seconds for the media in/out pumps to run
 run = False
-sendto = 'drewcliffporter@gmail.com'
+sendto = 'canyonbryson@gmail.com'
+temp_list = []
+OD_list = []
+pH_list = []
+timestamp_list = []
+setTemp = []
+setOD = []
+syncMedia = False
 
 @app.route('/')
 def mainpage():
-    if run == True:
-        state = 'ON'
-    if run == False:
-        state = 'OFF'
-    return render_template('index.html', IP = IP, state=state, pump_time = pump_time, temp = temp, sparging = duty_cycle, OD = optical_density, setpoint_T = setpoint_T, setpoint_OD = setpoint_OD, duty_cycle = duty_cycle)
+    global run
+    state = "ON" if run else "OFF"
+    return render_template('index.html', purge=purge, IP = IP, state=state, pump_time = pump_time, temp = temp, sparging = duty_cycle, OD = optical_density, setpoint_T = setpoint_T, setpoint_OD = setpoint_OD, duty_cycle = duty_cycle, pH = pH)
 
-@app.route('/refresh', methods = ['POST', 'GET'])
-def refresh():
+@app.route('/index')
+def index():
+    global run
+    state = "ON" if run else "OFF"
     return redirect('/')
 
-def refreshing():
-    while True:
-        # Get current variable to send back
-        global temp, optical_density, pump_time, duty_cycle
-        tuple1 = (temp, optical_density, duty_cycle, pump_time)
-        socketio.send("refreshing", (temp, optical_density, duty_cycle, pump_time))
-        time.sleep(1)
+@app.route('/syncMedia')
+def syncMedia():
+    global syncMedia   #gets the status of the toggle switch
+    Media = request.args.get('data').strip()
+    sync = "On" if Media == "Off" else "Off"
+    syncMedia = False if Media == "Off" else True
+    return jsonify(result=sync)
+
+@app.route('/graph')
+def graph():
+    global temp_list, OD_list, pH_list, timestamp_list, setpoint_T, setpoint_OD
+    graph1 = pygal.StackedLine(show_y_guides=False, x_title='Time', y_title='Temperature', x_label_rotation=20, fill=True, interpolate='cubic')
+    graph1.title = "Temp vs Time"
+    graph1.x_labels = timestamp_list
+    graph1.add('Temp', temp_list)
+    graph1.add('Setpoint', setTemp)
+    
+    graph2 = pygal.StackedLine(show_y_guides=False, x_title='Time', y_title='Optical Density', x_label_rotation=20, fill=True, zero=setpoint_T, interpolate='cubic', style = DarkStyle)
+    graph2.title = "OD vs Time"
+    graph2.x_labels = timestamp_list
+    graph2.add('OD', OD_list)
+    graph2.add('Setpoint', setOD)
+
+    
+    graph3 = pygal.StackedLine(show_y_guides=False, x_title='Time', y_title='pH', x_label_rotation=20, fill=True, zero=setpoint_OD, interpolate='cubic', style = NeonStyle)
+    graph3.title = "pH vs Time"
+    graph3.x_labels = timestamp_list
+    graph3.add('pH', pH_list)
+    
+    graph1=graph1.render_data_uri()
+    graph2=graph2.render_data_uri()
+    graph3=graph3.render_data_uri()
+
+    
+    return render_template('graph.html', graph1=graph1, graph2=graph2, graph3=graph3)
+
+@app.route('/refresh')
+def refresh():
+    try:
+        global temp, optical_density, pump_time, duty_cycle, pH, run
+        state = "ON" if run else "OFF"
+        return jsonify(temp=temp, OD=optical_density, pH=pH, sparging=duty_cycle, state=state)
+    except Exception as e:
+        return(str(e))
     
 
 @app.route('/change_temp', methods = ['POST'])
@@ -131,14 +185,15 @@ def media_time():
 def primeOD():
     value = request.form['time_OD']
     wait = int(value)
-    prime_pumps(wait ,'od')      
+    prime_pumps(wait ,'od')
     return redirect('/')
            
 @app.route('/primeIN', methods = ['POST'])
 def primeIN():
     value = request.form['time_IN']
     wait = int(value)
-    prime_pumps(wait ,'IN')       
+    prime_pumps(wait ,'IN')
+
     return redirect('/')
            
 @app.route('/primeOUT', methods = ['POST'])
@@ -160,16 +215,14 @@ def finish():
 
 @app.route('/end_run', methods = ['POST'])
 def end_run():
-    response = request.form['answer']
-    print (response)
-    if response == 'yes':
-        return render_template('email.html')
-    if response == 'no':
-        return redirect('/')
+    global run
+    run = False
+    return redirect('/')
 
 @app.route('/powerOFF', methods=['POST'])
 def powerOFF():
-    #power off code
+    call("sudo shutdown --poweroff", shell=True)
+    #Add a 60 second countdown on the page
     return redirect('/')
 
 @app.route('/email', methods = ['POST'])
@@ -181,7 +234,7 @@ def email():
     run = False
     return redirect('/')
 #     return render_template('goodbye.html')
-    
+ 
 def main():
     try:        
         t1 = threading.Thread(target = get_temp,)
@@ -190,7 +243,7 @@ def main():
         t4 = threading.Thread(target = screen,)
         t5 = threading.Thread(target = heater,)
         t6 = threading.Thread(target = sparging,)
-        t7 = threading.Thread(target = refreshing,)
+        t7 = threading.Thread(target = menu,)
         t8 = threading.Thread(target = write_data)
         
         t1.daemon = True
@@ -212,9 +265,8 @@ def main():
         t8.start()
         
 
-        if __name__ == '__main__':
-            socketio.run(app)
-#             app.run()
+#        if __name__ == '__main__':
+#            app.run(host=IP, port=5000)
             
 
             
@@ -235,69 +287,69 @@ def main():
 #     em.email(sendto, filename)
 
 def prime_pumps(wait, pump):
-    global purge
-    en1 = 18 # media pump enable
-    m_in = 25 # media in 
-    m_out = 24 # media out
-    m_OD = 16 # OD pump
-    GPIO.setup(en1, GPIO.OUT)
-    GPIO.setup(m_in, GPIO.OUT)
-    GPIO.setup(m_out, GPIO.OUT)
-    GPIO.setup(m_OD, GPIO.OUT)
-    GPIO.output(en1, True)
-    GPIO.output(m_in, False)
-    GPIO.output(m_out, False)
-    GPIO.output(m_OD, False)
-    purge = True
+    global purge, m_in, m_out, m_od
     
+    purge = True
+
     if pump == 'IN':
-        GPIO.output(m_in, True)
+        m_in.throttle = 1.0
         time.sleep(wait)
-        GPIO.output(m_in, False)
+        m_in.throttle = 0
     if pump == 'OUT':
-        GPIO.output(m_out, True)
+        m_out.throttle = 1.0
         time.sleep(wait)
-        GPIO.output(m_out, False)    
+        m_out.throttle = 0    
     if pump == 'od':
-        GPIO.output(m_OD, True)
+        m_od.throttle = 1.0
         time.sleep(wait)
-        GPIO.output(m_OD, False)
+        m_od.throttle = 0
         
     purge = False
     
 def write_data():
     while True:
-        if run == True:   
+        if run or not run:    
+            fieldnames=['timestamp','temp','setpoint_T','OD','setpoint_OD','pH','sparging', 'media']
             now = datetime.now()
             date = now.strftime("%m-%d-%y_%H:%M:%S")
-        #         print ('\n',date)
-            file = open('{}.csv'.format(date),'w+')
-            filename = '{}.csv'.format(date)
-        #         file = open('test1.csv','w+')
-        #         filename = ('test1.csv')
-            file.write('Chemostat run of {}'.format(date))
-            file.write('\nTimestamp, Temperature, Temp Setpoint, Heater, pH, OD, OD Setpoint, Media, Sparging')
-            
-            time.sleep(10) # sleep to allow readings to become accurate
-                            # and to settle    
-            # write data to a file
-            while run == True:
-                now1 = datetime.now()
-                date1 = now1.strftime("%m-%d-%y_%H:%M:%S")
+            with open('csv/{}.csv'.format(date),'w') as csv_file:
+                csv_writer=csv.DictWriter(csv_file, fieldnames=fieldnames)
+                csv_writer.writeheader()
 
-                file.write('\n{0},{1},{2},{3},{4},{5},{6},{7},{8}%,'.format(date1,
-                        temp,setpoint_T,heat,pH,optical_density,setpoint_OD, media,duty_cycle))
-            
-                time.sleep(1)
+            while True:
+                with open('csv/{}.csv'.format(date),'a') as csv_file:
+                    csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                    now1 = datetime.now()
+                    date1 = now.strftime("%m-%d-%y_%H:%M:%S")
+                    global temp, optical_density, duty_cycle, pH, pump_time, setpoint_OD, setpoint_T
+                    info = {
+                              'timestamp':  date1,
+                              'temp': temp,
+                              'setpoint_T':setpoint_T,
+                              'OD': optical_density,
+                              'setpoint_OD': setpoint_OD,
+                              'pH':pH,
+                              'sparging': duty_cycle,
+                              'media':pump_time
+                              }
+                    csv_writer.writerow(info)
+                    setTemp.append(setpoint_T)
+                    setOD.append(setpoint_OD)
+                    temp_list.append(temp)
+                    OD_list.append(optical_density)
+                    pH_list.append(pH)
+                    timestamp_list.append(date1)
+                time.sleep(3)
                 
-            file.close
-            em.email(sendto, filename)
-        
+            
 def menu():
     global setpoint_T
     global setpoint_OD
     global duty_cycle
     global run
+    
+ #   print('IP: ' + IP)
+#    time.sleep(60*2)  # display IP address for 2 minutes
     
     while True:
 #         while run == True:
@@ -325,36 +377,31 @@ def menu():
             else:
                 run = True
         else:
-            print ("Invalid input, please enter the cooresponding number")
+            print ("Invalid input, please enter the corresponding number")
                      
 def sparging():
-    global duty_cycle
-    # setup pins for the sparger
-    en2 = 20 # air pump enable
-    m_air = 23 # air pump
-    GPIO.setup(en2, GPIO.OUT)
-    GPIO.setup(m_air, GPIO.OUT)
-    speedair = GPIO.PWM(m_air, 1000)
-    speedair.start(duty_cycle)
+    global duty_cycle, m_air
     
-    GPIO.output(en2 , True)
-    GPIO.output(m_air , True)
+    speedair = duty_cycle / 100
+    
+    m_air.throttle = speedair
     
     previous = 0 # previous duty cycle value to check to
                  # see if it has beenchanged
     while True:
         while run == True:
             if duty_cycle != previous:
-                speedair.ChangeDutyCycle(duty_cycle)
+                speedair = duty_cycle / 100
                 previous = duty_cycle
+                m_air.throttle = speedair
     #         time.sleep(3)
         if run == False:
 #             duty_cycle = 0
-            speedair.ChangeDutyCycle(0)
+            speedair = 0
         
 def OD():
     global optical_density
-    global media
+    global media, syncMedia
     
     #setup the LED for optical density
     led = 12
@@ -363,19 +410,6 @@ def OD():
     pi.set_PWM_range(led, 100) #range is now 0-100
     pi.set_PWM_frequency(led, 10000) #set the frequency
     
-    # set up pins for peristaltic pumps for media
-    en1 = 18 # media pump enable
-    m_in = 25 # media in 
-    m_out = 24 # media out
-    m_OD = 16 # OD pump
-    GPIO.setup(en1, GPIO.OUT)
-    GPIO.setup(m_in, GPIO.OUT)
-    GPIO.setup(m_out, GPIO.OUT)
-    GPIO.setup(m_OD, GPIO.OUT)
-    GPIO.output(en1, False)
-    GPIO.output(m_in, False)
-    GPIO.output(m_out, False)
-    GPIO.output(m_OD, False)
     
     # create an analog input channel on pin 1
     chan1 = AnalogIn(mcp, MCP.P0) #OD
@@ -384,16 +418,15 @@ def OD():
     
     while True:
         while run == False and purge == False:
-            GPIO.output(en1, False)
-            GPIO.output(m_in, False)
-            GPIO.output(m_out, False)
-            GPIO.output(m_OD, False)
+            m_in.throttle = 0
+            m_out.throttle = 0
+            m_od.throttle = 0
             pi.set_PWM_dutycycle(led , 0) # turn off the LED
             
         while run == True:       
             summation = 0
             # turn on the LED and motor
-            GPIO.output(m_OD, True)
+            m_od.throttle = 1
             time.sleep(40) # allow for the OD module to receive the current media
             pi.set_PWM_dutycycle(led, 5)
             
@@ -403,7 +436,7 @@ def OD():
                 time.sleep(0.5)
                 
             pi.set_PWM_dutycycle(led , 0) # turn off the LED
-            GPIO.output(m_OD, False)      # and motor
+            m_od.throttle = 0      # and motor
             
             # go through and order the readings from smallest to largest
             for i in range (10):
@@ -416,23 +449,31 @@ def OD():
                 summation += raw[i]
             average = summation / 6
             
-            optical_density = round(average,2)
+            optical_density = round((average - 01.7) * 10, 3)
     #         print (d, optical_density)
             
             # change out media if the OD is higher than the setpoint
-            if optical_density > setpoint_OD:
+            if optical_density > setpoint_OD and not syncMedia:
                 media = 'IN'
-                GPIO.output(en1 , True)
-                GPIO.output(m_out , True)
+                m_out.throttle = 1
                 time.sleep(pump_time)
                 media = 'OUT'
-                GPIO.output(m_out, False)
-                GPIO.output(m_in, True)
+                m_out.throttle = 0
+                m_in.throttle = 1
                 time.sleep(pump_time)
                 media = 'OFF'
-                GPIO.output(en1 , False)
-                GPIO.output(m_in , False)
-            
+                m_in.throttle = 0
+                
+            elif optical_density > setpoint_OD and syncMedia:
+                media = 'ON'
+                m_in.throttle = 1
+                m_out.throttle = 1
+                time.sleep(pump_time)
+                media = 'OFF'
+                m_out.throttle = 0
+                m_in.throttle = 0
+
+
             time.sleep(1*60) # take OD every minute. Also allows for
                              # new media to mix well and give accurate
                              # readings
@@ -440,52 +481,65 @@ def OD():
 def ph():
     global pH
     # create an analog input channel on pin 2
-    chan2 = AnalogIn(mcp, MCP.P1) # pH
-    
+    try:
+        chan2 = AnalogIn(mcp, MCP.P1) # pH
+    except:
+        print("not connected to pH sensor")
     # values from calibration
     v4 = 1.9870127412832845 # voltage for pH 4, format (x1,y1) = (voltage, pH)
     v10 = 1.3067801937895778 # voltage for pH 10, format (x2,y2) = (voltage, pH)
     slope = (10-4)/(v10-v4) # (y2-y1/x2-x1)
     
-    raw = [0,0,0,0,0,0,0,0,0,0] # initialize an array for the raw values
+    raw = []
+    for i in range(100):
+        raw += [0]
+     # initialize an array for the raw values
         
     while True:
         while run == True:
             summation = 0
 
             # read 10 values at 0.5 sec intervals from the pH probe
-            for i in range (10):
+            for i in range (100):
                 raw[i] = chan2.voltage
-                time.sleep(0.5)
+                time.sleep(0.25)
                 
             # go through and order the readings from smallest to largest
-            for i in range (10):
-                for j in range (i+1, 10):
+            for i in range (100):
+                for j in range (i+1, 100):
                     if raw[i]>raw[j]: # go through and order the readings from smallest to largest
                         raw[i], raw[j] = raw[j], raw[i]
                         
             # average the middle six readings together
-            for i in range (2,8):
+            for i in range (20,80):
                 summation += raw[i]
-            average = summation / 6
+            average = summation / 60
             # y = y1 + m(x-x1)
             pH = round(10 + slope*(average - v10),2)  # use point slope from calibration to determine ph value
             
-            time.sleep(15)
+            time.sleep(5) # pH every 1/2 minute
     
 def screen(): 
-    
+    loading = True
+    while loading:
+        try:
     # setup for the screen
     # Using for SPI
-    spi = board.SPI()
-    oled_reset = digitalio.DigitalInOut(board.D17)
-    oled_cs = digitalio.DigitalInOut(board.D5)
-    oled_dc = digitalio.DigitalInOut(board.D6)
-    oled = adafruit_ssd1306.SSD1306_SPI(128, 64, spi, oled_dc, oled_reset, oled_cs)
-     
+            spi = board.SPI()
+            oled_reset = digitalio.DigitalInOut(board.D17)
+            oled_cs = digitalio.DigitalInOut(board.D5)
+            oled_dc = digitalio.DigitalInOut(board.D6)
+            oled = adafruit_ssd1306.SSD1306_SPI(128, 64, spi, oled_dc, oled_reset, oled_cs)
+            loading = False
+        except:
+            loading = True
+            
+    try: 
     # Load font.
-    font = ImageFont.truetype('arial.ttf', 12)
-    
+        font = ImageFont.truetype('/home/pi/Chemostat/arial.ttf', 12)
+    except:
+        font = ImageFont.load_default()
+            
     # get the IP address
     IP = str(subprocess.check_output(["hostname", "-I"]).split()[0])
     IP = IP[2:-1]
@@ -496,20 +550,22 @@ def screen():
         if run == False:
             state = "OFF"
         # Create blank image for drawing.
+        
         # Make sure to create image with mode '1' for 1-bit color.
         image = Image.new('1', (oled.width, oled.height))
         # Get drawing object to draw on image.
         draw = ImageDraw.Draw(image)
         # Draw Some Text
         draw.text((1, 1), 'Temp: '+ str(temp)+' / '+ str(setpoint_T) + ' C', font=font, fill=255)
-        draw.text((1, 15), 'Heater: ' + heat + ' ' + state , font=font, fill=255)
+        draw.text((1, 15), 'Heat: ' + heat + ' St: ' + state , font=font, fill=255)
         draw.text((1, 28), 'Sparging: '+ str(duty_cycle)+'%', font=font, fill=255)
-        draw.text((1, 40), 'pH: ' + str(pH) + ' OD: ' + str(optical_density), font=font, fill=255)
-        draw.text((1, 52), 'IP: ' + str(IP), font=font, fill=255)
+        draw.text((1, 41), 'pH: ' + str(pH) + ' OD: ' + str(optical_density), font=font, fill=255)
+        draw.text((1, 53), 'IP: ' + str(IP), font=font, fill=255)
          
         # Display image
         oled.image(image)
         oled.show()
+        #oled.dispaly()
         time.sleep(2)
 
 def read_temp_raw():
@@ -565,7 +621,8 @@ def heater():
                 GPIO.output(relay, False) # set relay to on
                 heat = 'ON'
             time.sleep(2)
+  
 
+            
 
 main()
-
